@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="IssueTracker.Application/IssueTracker.Application.csproj" />
+  <Project Path="IssueTracker.Domain/IssueTracker.Domain.csproj" />
+  <Project Path="IssueTracker.Infrastructure.Test/IssueTracker.Infrastructure.Test.csproj" />
+  <Project Path="IssueTracker.Infrastructure/IssueTracker.Infrastructure.csproj" />
+  <Project Path="IssueTracker.WebApi/IssueTracker.WebApi.csproj" />
+</Solution>
