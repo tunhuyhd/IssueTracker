@@ -96,6 +96,6 @@ public class ApplicationDbRepository<T> : IRepository<T>
 
     public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
-		return _context.SaveChangesAsync(cancellationToken);
-	}
+        return _context.SaveChangesAsync(cancellationToken);
+    }
 }

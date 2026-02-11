@@ -12,5 +12,11 @@ public class AuthController : BaseApiController
 		return Ok(result);
 	}
 
+	[HttpPost("login")]
+	public async Task<IActionResult> Login([FromBody] LoginCommand command)
+	{
+		var result = await Mediator.Send(command);
+		return Ok(result);
+	}
 
 }

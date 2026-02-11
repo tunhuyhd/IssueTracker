@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using IssueTracker.Application.Common;
 using IssueTracker.Application.Common.Authorization;
+using IssueTracker.Application.Identity;
 using IssueTracker.Domain.Common;
 using IssueTracker.Infrastructure.Auth;
 using IssueTracker.Infrastructure.Persistence.Context;
@@ -28,6 +29,7 @@ public static class Startup
     private static IServiceCollection AddAuth(this IServiceCollection services)
     {
         services.AddScoped<ICurrentUser, CurrentUser>();
+        services.AddScoped<ITokenService, TokenService>();
         return services;
     }
 

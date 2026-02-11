@@ -36,8 +36,10 @@ public class RegisterCommandHandler(IRepository<User> userRepository, IApplicati
 			RoleId = roleUser != null ? roleUser.Id : Guid.Empty
 		};
 
-		userRepository.AddAsync(newUser, cancellationToken);
-		userRepository.SaveChangesAsync(cancellationToken);
+		newUser.SetPasswordHash(request.Password);
+
+		await userRepository.AddAsync(newUser, cancellationToken);
+		await userRepository.SaveChangesAsync(cancellationToken);
 
 		return new RegisterResponse
 		{
