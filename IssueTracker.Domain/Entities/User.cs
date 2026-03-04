@@ -40,6 +40,8 @@ public class User : AuditableEntity, IAggregateRoot
 	public Guid RoleId { get; set; }
 	public Role Role { get; set; }
 
+	public List<UserProject> UserProjects { get; set; } = [];
+
 	public void SetPasswordHash(string password)
 	{
 		Salt = GenerateSalt();

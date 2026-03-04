@@ -3,6 +3,7 @@ using System;
 using IssueTracker.Infrastructure.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace IssueTracker.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260303141120_NewRelationship")]
+    partial class NewRelationship
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -213,7 +216,7 @@ namespace IssueTracker.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("project_roles");
+                    b.ToTable("ProjectRoles");
                 });
 
             modelBuilder.Entity("IssueTracker.Domain.Entities.Role", b =>
@@ -352,13 +355,9 @@ namespace IssueTracker.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("IssueTracker.Domain.Entities.UserProject", b =>
                 {
-                    b.Property<Guid>("UserId")
+                    b.Property<Guid>("Id")
                         .HasColumnType("uuid")
-                        .HasColumnName("user_id");
-
-                    b.Property<Guid>("ProjectId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("project_id");
+                        .HasColumnName("id");
 
                     b.Property<Guid>("CreatedBy")
                         .HasColumnType("uuid")
@@ -376,10 +375,6 @@ namespace IssueTracker.Infrastructure.Persistence.Migrations
                         .HasColumnType("timestamp without time zone")
                         .HasColumnName("deleted_on");
 
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
                     b.Property<Guid>("LastModifiedBy")
                         .HasColumnType("uuid")
                         .HasColumnName("last_modified_by");
@@ -388,15 +383,25 @@ namespace IssueTracker.Infrastructure.Persistence.Migrations
                         .HasColumnType("timestamp without time zone")
                         .HasColumnName("last_modified_on");
 
+                    b.Property<Guid>("ProjectId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("project_id");
+
                     b.Property<Guid>("ProjectRoleId")
                         .HasColumnType("uuid")
                         .HasColumnName("project_role_id");
 
-                    b.HasKey("UserId", "ProjectId");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("ProjectId");
 
                     b.HasIndex("ProjectRoleId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("user_projects");
                 });
