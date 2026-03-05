@@ -15,4 +15,12 @@ public class AdminController : BaseApiController
 		var result = await Mediator.Send(command);
 		return Ok(result);
 	}
+
+	[HttpPost("project-permissions")]
+	[MustHavePermission(PermissionCode.SystemSettings)]
+	public async Task<IActionResult> CreateProjectPermission(AddProjectPermissionCommand command)
+	{
+		var result = await Mediator.Send(command);
+		return Ok(result);
+	}
 }
