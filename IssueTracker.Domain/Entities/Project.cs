@@ -16,9 +16,9 @@ public class Project : AuditableEntity, IAggregateRoot
 	public string Description { get; set; } = string.Empty;
 
 	[Column("owner_id")]
-	public string OwnerId { get; set; }
+	public Guid OwnerId { get; set; }
 
-	public User Owner { get; set; }
+	public User Owner { get; set; } = null!;
 
 	[Column("is_enabled")]
 

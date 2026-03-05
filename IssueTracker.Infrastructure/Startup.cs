@@ -33,6 +33,7 @@ public static class Startup
         services.AddScoped<ICurrentUser, CurrentUser>();
         services.AddScoped<ICurrentUserService, CurrentUserService>();
         services.AddScoped<ITokenService, TokenService>();
+        services.AddScoped<IProjectAuthorizationService, ProjectAuthorizationService>();
         return services;
     }
 

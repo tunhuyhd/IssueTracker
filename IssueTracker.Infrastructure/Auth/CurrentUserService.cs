@@ -124,7 +124,7 @@ public class CurrentUserService : ICurrentUserService
 			.AsNoTracking()
 			.FirstOrDefaultAsync(p => p.Id == projectId, cancellationToken);
 
-		return project != null && project.OwnerId == userId.ToString();
+		return project != null && project.OwnerId == userId;
 	}
 
 	public async Task<ProjectRole?> GetProjectRoleAsync(Guid projectId, CancellationToken cancellationToken = default)
