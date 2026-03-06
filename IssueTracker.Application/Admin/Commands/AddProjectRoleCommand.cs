@@ -15,7 +15,7 @@ public class AddProjectRoleCommand : IRequest<ProjectRoleDto>
 	public string Code { get; set; }
 	public string Description { get; set; }
 }
-public class AddProjectRoleCommandHandler(IRepository<ProjectRole> projectRoleRepository, ICurrentUser currentUser) : IRequestHandler<AddProjectRoleCommand, ProjectRoleDto>
+public class AddProjectRoleCommandHandler(IRepository<Domain.Entities.ProjectRole> projectRoleRepository, ICurrentUser currentUser) : IRequestHandler<AddProjectRoleCommand, ProjectRoleDto>
 {
 	public async Task<ProjectRoleDto> Handle(AddProjectRoleCommand request, CancellationToken cancellationToken)
 	{
@@ -31,7 +31,7 @@ public class AddProjectRoleCommandHandler(IRepository<ProjectRole> projectRoleRe
 			throw new InvalidOperationException($"A project role with code '{request.Code}' already exists.");
 		}
 
-		var projectRole = new ProjectRole
+		var projectRole = new Domain.Entities.ProjectRole
 		{
 			Code = request.Code,
 			Description = request.Description

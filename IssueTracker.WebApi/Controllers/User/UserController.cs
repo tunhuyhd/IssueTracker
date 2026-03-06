@@ -31,7 +31,6 @@ public class UserController : BaseApiController
             isActive = user.IsActive,
             role = new
             {
-                id = user.Role?.Id,
                 code = user.Role?.Code,
                 description = user.Role?.Description
             },

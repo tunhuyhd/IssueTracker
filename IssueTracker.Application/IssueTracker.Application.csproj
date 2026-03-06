@@ -12,7 +12,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Admin\Queries\" />
     <Folder Include="Common\Request\" />
     <Folder Include="Projects\Queries\" />
   </ItemGroup>

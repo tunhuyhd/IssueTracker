@@ -76,4 +76,30 @@ public class User : AuditableEntity, IAggregateRoot
 		rng.GetBytes(saltBytes);
 		return Convert.ToBase64String(saltBytes);
 	}
+
+	public void Update(string email, string fullName, string? imageUrl)
+	{
+		if (string.IsNullOrWhiteSpace(email))
+			throw new ArgumentException("Email cannot be empty", nameof(email));
+		Email = email;
+		FullName = fullName;
+		ImageUrl = imageUrl;
+	}
+
+	public void UpdateRole(Guid roleId)
+	{
+		if (roleId == Guid.Empty)
+			throw new ArgumentException("Role ID cannot be empty", nameof(roleId));
+		RoleId = roleId;
+	}
+
+	public void Activate()
+	{
+		IsActive = true;
+	}
+
+	public void Deactivate()
+	{
+		IsActive = false;
+	}
 }
