@@ -4,6 +4,7 @@ using IssueTracker.Infrastructure.Auth;
 using IssueTracker.Infrastructure.Persistence.Context;
 using IssueTracker.Infrastructure.Persistence.Seeder;
 using IssueTracker.WebApi.Configuration;
+using IssueTracker.WebApi.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -89,6 +90,9 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseCors("AllowFrontend");
+
+// Global Exception Handler (phải đặt sau CORS)
+app.UseMiddleware<ExceptionHandlerMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();
