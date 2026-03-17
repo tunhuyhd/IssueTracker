@@ -17,8 +17,8 @@ public class UpdateProjectRoleCommand : IRequest<ProjectRoleDto>
 	[JsonIgnore]
 	public Guid Id { get; set; }
 
-	public string Code { get; set; } = string.Empty;
-	public string Description { get; set; } = string.Empty;
+	public string? Code { get; set; } = string.Empty;
+	public string? Description { get; set; } = string.Empty;
 	public List<Guid>? PermissionIds { get; set; }
 }
 

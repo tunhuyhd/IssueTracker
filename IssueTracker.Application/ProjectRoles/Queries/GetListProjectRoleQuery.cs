@@ -17,7 +17,7 @@ public class GetListProjectRoleQueryHandler(IApplicationDbContext dbContext) : I
 {
 	public async Task<List<ProjectRoleDto>> Handle(GetListProjectRoleQuery request, CancellationToken cancellationToken)
 	{
-		var projectRoles = await dbContext.ProjectRoles.ToListAsync();
+		var projectRoles = await dbContext.ProjectRoles.Include(r => r.ProjectPermissions).ToListAsync();
 
 		return projectRoles.Select(r => new ProjectRoleDto
 		{
