@@ -13,5 +13,7 @@ public interface IApplicationDbContext
     DbSet<ProjectPermission> ProjectPermissions { get; }
     DbSet<UserProject> UserProjects { get; }
 
-    Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
+    DbSet<ProjectRolePermission> ProjectRolePermissions { get; }
+
+	Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

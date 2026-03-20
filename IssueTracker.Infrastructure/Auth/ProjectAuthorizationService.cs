@@ -36,20 +36,22 @@ public class ProjectAuthorizationService : IProjectAuthorizationService
 		if (userId == Guid.Empty)
 			return Array.Empty<string>();
 
-		// If user is system admin, grant all project permissions
+		// If user is system admin, grant all project permissions (excluding soft deleted)
 		if (_currentUser.GetRoleCode() == Domain.Entities.Enum.RoleCode.Admin)
 		{
 			var allPermissions = await _context.ProjectPermissions
+				.Where(pp => pp.DeletedOn == null)
 				.Select(pp => pp.Code)
 				.ToArrayAsync(cancellationToken);
 			return allPermissions;
 		}
 
-		// Get user's project role and permissions
+		// Get user's project role and permissions (excluding soft deleted junction and permissions)
 		var permissions = await _context.UserProjects
 			.Where(up => up.UserId == userId && up.ProjectId == projectId)
-			.SelectMany(up => up.ProjectRole.ProjectPermissions)
-			.Select(pp => pp.Code)
+			.SelectMany(up => up.ProjectRole.ProjectRolePermissions)
+			.Where(prp => prp.DeletedOn == null && prp.ProjectPermission.DeletedOn == null)
+			.Select(prp => prp.ProjectPermission.Code)
 			.Distinct()
 			.ToArrayAsync(cancellationToken);
 

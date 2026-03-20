@@ -12,7 +12,6 @@ namespace IssueTracker.Application.Admin.Commands;
 
 public class AddProjectPermissionCommand : IRequest<ProjectPermissionDto>
 {
-	public Guid ProjectRoleId { get; set; }
 	public string Name { get; set; } = string.Empty;
 	public string Code { get; set; } = string.Empty;
 }
@@ -37,18 +36,10 @@ public class AddProjectPermissionCommandHandler(
 			throw new InvalidOperationException($"A project permission with code '{request.Code}' already exists.");
 		}
 
-		var projectRole = await projectRoleRepository.GetByIdAsync(request.ProjectRoleId, cancellationToken);
-		
-		if (projectRole == null)
-		{
-			throw new InvalidOperationException($"Project role with ID '{request.ProjectRoleId}' does not exist.");
-		}
-
 		var newPermission = new ProjectPermission
 		{
 			Name = request.Name,
-			Code = request.Code,
-			ProjectRoles = new List<ProjectRole> { projectRole }
+			Code = request.Code
 		};
 
 		await repository.AddAsync(newPermission);

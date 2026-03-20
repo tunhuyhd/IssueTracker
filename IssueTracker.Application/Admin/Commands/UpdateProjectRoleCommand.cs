@@ -17,14 +17,12 @@ public class UpdateProjectRoleCommand : IRequest<ProjectRoleDto>
 	[JsonIgnore]
 	public Guid Id { get; set; }
 
-	public string? Code { get; set; } = string.Empty;
-	public string? Description { get; set; } = string.Empty;
-	public List<Guid>? PermissionIds { get; set; }
+	public string? Code { get; set; }
+	public string? Description { get; set; }
 }
 
 public class UpdateProjectRoleCommandHandler(
 	IRepository<Domain.Entities.ProjectRole> repository,
-	IRepository<ProjectPermission> permissionRepository,
 	ICurrentUser currentUser) : IRequestHandler<UpdateProjectRoleCommand, ProjectRoleDto>
 {
 	public async Task<ProjectRoleDto> Handle(UpdateProjectRoleCommand request, CancellationToken cancellationToken)
@@ -46,21 +44,6 @@ public class UpdateProjectRoleCommandHandler(
 		// Update basic info
 		projectRole.Update(request.Code, request.Description);
 
-		// Update permissions if provided
-		if (request.PermissionIds != null && request.PermissionIds.Any())
-		{
-			var permissions = await permissionRepository.ListAsync(
-				p => request.PermissionIds.Contains(p.Id),
-				cancellationToken);
-
-			if (permissions.Count != request.PermissionIds.Count)
-			{
-				throw new InvalidOperationException("One or more permission IDs are invalid.");
-			}
-
-			projectRole.SetPermissions(permissions);
-		}
-
 		await repository.UpdateAsync(projectRole, cancellationToken);
 		await repository.SaveChangesAsync(cancellationToken);
 
@@ -69,12 +52,14 @@ public class UpdateProjectRoleCommandHandler(
 			Id = projectRole.Id,
 			Code = projectRole.Code,
 			Description = projectRole.Description,
-			Permissions = projectRole.ProjectPermissions.Select(p => new ProjectPermissionDto
-			{
-				Id = p.Id,
-				Code = p.Code,
-				Name = p.Name
-			}).ToList()
+			Permissions = projectRole.ProjectRolePermissions
+				.Where(prp => prp.DeletedOn == null && prp.ProjectPermission != null && prp.ProjectPermission.DeletedOn == null)
+				.Select(prp => new ProjectPermissionDto
+				{
+					Id = prp.ProjectPermission.Id,
+					Code = prp.ProjectPermission.Code,
+					Name = prp.ProjectPermission.Name
+				}).ToList()
 		};
 	}
 }

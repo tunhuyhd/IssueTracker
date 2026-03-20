@@ -15,5 +15,5 @@ public class ProjectPermission : AuditableEntity, IAggregateRoot
 	[Column("name")]
 	public string Name { get; set; } = string.Empty;
 
-	public List<ProjectRole> ProjectRoles { get; set; } = [];
+	public List<ProjectRolePermission> ProjectRolePermissions { get; set; } = [];
 }

@@ -136,7 +136,8 @@ public class CurrentUserService : ICurrentUserService
 		var userProject = await _dbContext.Set<UserProject>()
 			.AsNoTracking()
 			.Include(up => up.ProjectRole)
-				.ThenInclude(pr => pr.ProjectPermissions)
+				.ThenInclude(pr => pr.ProjectRolePermissions.Where(prp => prp.DeletedOn == null && prp.ProjectPermission.DeletedOn == null))
+					.ThenInclude(prp => prp.ProjectPermission)
 			.FirstOrDefaultAsync(up => up.UserId == userId && up.ProjectId == projectId, cancellationToken);
 
 		return userProject?.ProjectRole;

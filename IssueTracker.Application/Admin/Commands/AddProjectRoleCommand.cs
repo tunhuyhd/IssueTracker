@@ -25,7 +25,7 @@ public class AddProjectRoleCommandHandler(IRepository<Domain.Entities.ProjectRol
 			throw new UnauthorizedAccessException("Only Admin can add project roles.");
 		}
 
-		var existingRole = await projectRoleRepository.GetOneAsync(r => r.Code == request.Code);
+		var existingRole = await projectRoleRepository.GetOneAsync(r => r.Code == request.Code && r.DeletedOn == null);
 
 		if (existingRole != null) {
 			throw new InvalidOperationException($"A project role with code '{request.Code}' already exists.");

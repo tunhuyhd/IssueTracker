@@ -17,19 +17,25 @@ public class GetListProjectRoleQueryHandler(IApplicationDbContext dbContext) : I
 {
 	public async Task<List<ProjectRoleDto>> Handle(GetListProjectRoleQuery request, CancellationToken cancellationToken)
 	{
-		var projectRoles = await dbContext.ProjectRoles.Include(r => r.ProjectPermissions).ToListAsync();
+		var projectRoles = await dbContext.ProjectRoles
+			.Include(r => r.ProjectRolePermissions.Where(prp => prp.DeletedOn == null && prp.ProjectPermission.DeletedOn == null))
+				.ThenInclude(prp => prp.ProjectPermission)
+			.Where(r => r.DeletedOn == null)
+			.ToListAsync();
 
 		return projectRoles.Select(r => new ProjectRoleDto
 		{
 			Id = r.Id,
 			Code = r.Code,
 			Description = r.Description,
-			Permissions = r.ProjectPermissions.Select(p => new ProjectPermissionDto
-			{
-				Id = p.Id,
-				Code = p.Code,
-				Name = p.Name
-			}).ToList()
+			Permissions = r.ProjectRolePermissions
+				.Where(prp => prp.DeletedOn == null && prp.ProjectPermission != null && prp.ProjectPermission.DeletedOn == null)
+				.Select(prp => new ProjectPermissionDto
+				{
+					Id = prp.ProjectPermission.Id,
+					Code = prp.ProjectPermission.Code,
+					Name = prp.ProjectPermission.Name
+				}).ToList()
 		}).ToList();
 	}
 }

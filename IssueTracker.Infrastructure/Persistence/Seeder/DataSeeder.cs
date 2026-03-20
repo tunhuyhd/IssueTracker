@@ -181,31 +181,128 @@ public static class DataSeeder
 	}
 	private static async Task SeedProjectPermissionsAsync(ApplicationDbContext context)
     {
-        var projectPermissions = new List<ProjectPermission>
+		var projectPermissions = new List<ProjectPermission>
         {
+            // ================= PROJECT =================
             new ProjectPermission
-            {
-                Id = Guid.NewGuid(),
-                Code = "PROJECT_EDIT",
-                Name = "Chỉnh sửa dự án",
-                CreatedBy = Guid.Empty
-            },
+	        {
+		        Id = Guid.NewGuid(),
+		        Code = "PROJECT_VIEW",
+		        Name = "Xem dự án",
+		        CreatedBy = Guid.Empty
+	        },
+	        new ProjectPermission
+	        {
+		        Id = Guid.NewGuid(),
+		        Code = "PROJECT_CREATE",
+		        Name = "Tạo dự án",
+		        CreatedBy = Guid.Empty
+	        },
+	        new ProjectPermission
+	        {
+		        Id = Guid.NewGuid(),
+		        Code = "PROJECT_EDIT",
+		        Name = "Chỉnh sửa dự án",
+		        CreatedBy = Guid.Empty
+	        },
+	        new ProjectPermission
+	        {
+		        Id = Guid.NewGuid(),
+		        Code = "PROJECT_DELETE",
+		        Name = "Xóa dự án",
+		        CreatedBy = Guid.Empty
+	        },
+
+            // ================= ISSUE =================
             new ProjectPermission
-            {
-                Id = Guid.NewGuid(),
-                Code = "ISSUE_MANAGE",
-                Name = "Quản lý issue",
-                CreatedBy = Guid.Empty
-            },
+	        {
+		        Id = Guid.NewGuid(),
+		        Code = "ISSUE_VIEW",
+		        Name = "Xem issue",
+		        CreatedBy = Guid.Empty
+	        },
+	        new ProjectPermission
+	        {
+		        Id = Guid.NewGuid(),
+		        Code = "ISSUE_CREATE",
+		        Name = "Tạo issue",
+		        CreatedBy = Guid.Empty
+	        },
+	        new ProjectPermission
+	        {
+		        Id = Guid.NewGuid(),
+		        Code = "ISSUE_EDIT",
+		        Name = "Chỉnh sửa issue",
+		        CreatedBy = Guid.Empty
+	        },
+	        new ProjectPermission
+	        {
+		        Id = Guid.NewGuid(),
+		        Code = "ISSUE_DELETE",
+		        Name = "Xóa issue",
+		        CreatedBy = Guid.Empty
+	        },
+	        new ProjectPermission
+	        {
+		        Id = Guid.NewGuid(),
+		        Code = "ISSUE_ASSIGN",
+		        Name = "Gán người xử lý",
+		        CreatedBy = Guid.Empty
+	        },
+	        new ProjectPermission
+	        {
+		        Id = Guid.NewGuid(),
+		        Code = "ISSUE_CHANGE_STATUS",
+		        Name = "Thay đổi trạng thái issue",
+		        CreatedBy = Guid.Empty
+	        },
+	        new ProjectPermission
+	        {
+		        Id = Guid.NewGuid(),
+		        Code = "ISSUE_COMMENT",
+		        Name = "Bình luận issue",
+		        CreatedBy = Guid.Empty
+	        },
+	        new ProjectPermission
+	        {
+		        Id = Guid.NewGuid(),
+		        Code = "ISSUE_ATTACH_FILE",
+		        Name = "Đính kèm file",
+		        CreatedBy = Guid.Empty
+	        },
+
+            // ================= MEMBER =================
             new ProjectPermission
-            {
-                Id = Guid.NewGuid(),
-                Code = "VIEW_PROJECT",
-                Name = "Xem dự án",
-                CreatedBy = Guid.Empty
-            }
+	        {
+		        Id = Guid.NewGuid(),
+		        Code = "MEMBER_VIEW",
+		        Name = "Xem danh sách thành viên",
+		        CreatedBy = Guid.Empty
+	        },
+	        new ProjectPermission
+	        {
+		        Id = Guid.NewGuid(),
+		        Code = "MEMBER_ADD",
+		        Name = "Thêm thành viên",
+		        CreatedBy = Guid.Empty
+	        },
+	        new ProjectPermission
+	        {
+		        Id = Guid.NewGuid(),
+		        Code = "MEMBER_REMOVE",
+		        Name = "Xóa thành viên",
+		        CreatedBy = Guid.Empty
+	        },
+	        new ProjectPermission
+	        {
+		        Id = Guid.NewGuid(),
+		        Code = "MEMBER_UPDATE_ROLE",
+		        Name = "Cập nhật vai trò thành viên",
+		        CreatedBy = Guid.Empty
+	        }
         };
-        foreach (var projectPermission in projectPermissions)
+
+		foreach (var projectPermission in projectPermissions)
         {
             var existingProjectPermission = await context.ProjectPermissions
                 .FirstOrDefaultAsync(pp => pp.Code == projectPermission.Code);

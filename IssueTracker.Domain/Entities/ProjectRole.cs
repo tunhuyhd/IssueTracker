@@ -14,19 +14,15 @@ public class ProjectRole : AuditableEntity, IAggregateRoot
 	[Column("description")]
 	public string Description { get; set; } = string.Empty;
 
-	public List<ProjectPermission> ProjectPermissions { get; set; } = [];
+	public List<ProjectRolePermission> ProjectRolePermissions { get; set; } = [];
 
 	/// Update project role information
-	public void Update(string code, string description)
+	public void Update(string? code, string? description)
 	{
-		if (string.IsNullOrWhiteSpace(code))
-			throw new ArgumentException("Project role code cannot be empty", nameof(code));
-
-		if (string.IsNullOrWhiteSpace(description))
-			throw new ArgumentException("Project role description cannot be empty", nameof(description));
-
-		Code = code;
-		Description = description;
+		if (code != null)
+			Code = code;
+		if (description != null)
+			Description = description;
 	}
 
 	/// Add a permission to this project role
@@ -35,10 +31,15 @@ public class ProjectRole : AuditableEntity, IAggregateRoot
 		if (permission == null)
 			throw new ArgumentNullException(nameof(permission));
 
-		if (ProjectPermissions.Any(p => p.Id == permission.Id))
-			return; // Already exists
+		if (ProjectRolePermissions.Any(prp => prp.ProjectPermissionId == permission.Id))
+			return;
 
-		ProjectPermissions.Add(permission);
+		ProjectRolePermissions.Add(new ProjectRolePermission
+		{
+			ProjectRoleId = this.Id,
+			ProjectPermissionId = permission.Id,
+			ProjectPermission = permission
+		});
 	}
 
 	/// Remove a permission from this project role
@@ -47,13 +48,13 @@ public class ProjectRole : AuditableEntity, IAggregateRoot
 		if (permission == null)
 			throw new ArgumentNullException(nameof(permission));
 
-		ProjectPermissions.RemoveAll(p => p.Id == permission.Id);
+		ProjectRolePermissions.RemoveAll(prp => prp.ProjectPermissionId == permission.Id);
 	}
 
 	/// Clear all permissions
 	public void ClearPermissions()
 	{
-		ProjectPermissions.Clear();
+		ProjectRolePermissions.Clear();
 	}
 
 	/// Set permissions for this project role
@@ -62,14 +63,19 @@ public class ProjectRole : AuditableEntity, IAggregateRoot
 		if (permissions == null)
 			throw new ArgumentNullException(nameof(permissions));
 
-		ProjectPermissions.Clear();
-		ProjectPermissions.AddRange(permissions);
+		ProjectRolePermissions.Clear();
+		ProjectRolePermissions.AddRange(permissions.Select(p => new ProjectRolePermission
+		{
+			ProjectRoleId = this.Id,
+			ProjectPermissionId = p.Id,
+			ProjectPermission = p
+		}));
 	}
 
 	/// Check if this role has a specific permission
 	public bool HasPermission(Guid permissionId)
 	{
-		return ProjectPermissions.Any(p => p.Id == permissionId);
+		return ProjectRolePermissions.Any(prp => prp.ProjectPermissionId == permissionId);
 	}
 
 	/// Check if this role has a specific permission by code
@@ -78,6 +84,6 @@ public class ProjectRole : AuditableEntity, IAggregateRoot
 		if (string.IsNullOrWhiteSpace(permissionCode))
 			return false;
 
-		return ProjectPermissions.Any(p => p.Code == permissionCode);
+		return ProjectRolePermissions.Any(prp => prp.ProjectPermission.Code == permissionCode);
 	}
 }

@@ -16,6 +16,7 @@ public class ApplicationDbContext(DbContextOptions options, ICurrentUser current
 	public DbSet<ProjectRole> ProjectRoles => Set<ProjectRole>();
 	public DbSet<ProjectPermission> ProjectPermissions => Set<ProjectPermission>();
 	public DbSet<UserProject> UserProjects => Set<UserProject>();
+	public DbSet<ProjectRolePermission> ProjectRolePermissions => Set<ProjectRolePermission>();
 
 	protected override void OnModelCreating(ModelBuilder modelBuilder)
 	{

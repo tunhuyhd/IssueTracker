@@ -22,4 +22,12 @@ public class ProjectRolesController : BaseApiController
 		var result = await Mediator.Send(new GetProjectRoleByIdQuery { Id = id });
 		return Ok(result);
 	}
+
+	[HttpGet("project-roles/{id:guid}/available-permissions")]
+	[MustBeAuthenticated]
+	public async Task<IActionResult> GetAvailablePermissions(Guid id)
+	{
+		var result = await Mediator.Send(new GetAvailableProjectPermissionsQuery { ProjectRoleId = id });
+		return Ok(result);
+	}
 }

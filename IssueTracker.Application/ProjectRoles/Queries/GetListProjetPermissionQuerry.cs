@@ -18,7 +18,7 @@ public class GetListProjetPermissionQuerryHandler(IApplicationDbContext dbContex
 {
 	public async Task<List<ProjectPermissionDto>> Handle(GetListProjetPermissionQuerry request, CancellationToken cancellationToken)
 	{
-		var permissions = await dbContext.ProjectPermissions.ToListAsync(cancellationToken);
+		var permissions = await dbContext.ProjectPermissions.Where(pp => pp.DeletedOn == null).ToListAsync(cancellationToken);
 
 		return permissions.Select(p => new ProjectPermissionDto
 		{

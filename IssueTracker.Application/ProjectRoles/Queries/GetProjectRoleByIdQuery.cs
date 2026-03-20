@@ -17,8 +17,11 @@ public class GetProjectRoleByIdQueryHandler(IApplicationDbContext dbContext) : I
 {
 	public async Task<ProjectRoleDto> Handle(GetProjectRoleByIdQuery request, CancellationToken cancellationToken)
 	{
-		var projectRole = await dbContext.ProjectRoles.Include(r => r.ProjectPermissions).FirstOrDefaultAsync(r => r.Id == request.Id, cancellationToken);
-		
+		var projectRole = await dbContext.ProjectRoles
+			.Include(r => r.ProjectRolePermissions.Where(prp => prp.DeletedOn == null && prp.ProjectPermission.DeletedOn == null))
+				.ThenInclude(prp => prp.ProjectPermission)
+			.FirstOrDefaultAsync(r => r.Id == request.Id, cancellationToken);
+
 		if (projectRole == null)
 		{
 			return null;
@@ -29,12 +32,14 @@ public class GetProjectRoleByIdQueryHandler(IApplicationDbContext dbContext) : I
 			Id = projectRole.Id,
 			Code = projectRole.Code,
 			Description = projectRole.Description,
-			Permissions = projectRole.ProjectPermissions.Select(p => new ProjectPermissionDto
-			{
-				Id = p.Id,
-				Code = p.Code,
-				Name = p.Name
-			}).ToList()
+			Permissions = projectRole.ProjectRolePermissions
+				.Where(prp => prp.DeletedOn == null && prp.ProjectPermission != null && prp.ProjectPermission.DeletedOn == null)
+				.Select(prp => new ProjectPermissionDto
+				{
+					Id = prp.ProjectPermission.Id,
+					Code = prp.ProjectPermission.Code,
+					Name = prp.ProjectPermission.Name
+				}).ToList()
 		};
 	}
 }

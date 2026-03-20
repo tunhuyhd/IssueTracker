@@ -47,7 +47,7 @@ public class AdminController : BaseApiController
 	{
 		command.Id = id;
 		var result = await Mediator.Send(command);
-		return Ok(result);
+		return Ok(result); 
 	}
 
 	[HttpGet("permissions")]
@@ -89,5 +89,39 @@ public class AdminController : BaseApiController
 	{
 		var result = await Mediator.Send(new GetUserByIdQuery { UserId = userId });
 		return Ok(result);
+	}
+
+	[HttpPost("project-roles/{roleId:guid}/permissions/{permissionId:guid}")]
+	[MustHavePermission(PermissionCode.SystemSettings)]
+	public async Task<IActionResult> AddPermissionIntoRole(Guid roleId, Guid permissionId)
+	{
+		var command = new AddProjectPermissionIntoRoleCommand
+		{
+			ProjectRoleId = roleId,
+			ProjectPermissionId = permissionId
+		};
+		var result = await Mediator.Send(command);
+		return Ok(result);
+	}
+
+	[HttpDelete("project-roles/{roleId:guid}/permissions/{permissionId:guid}")]
+	[MustHavePermission(PermissionCode.SystemSettings)]
+	public async Task<IActionResult> RemovePermissionFromRole(Guid roleId, Guid permissionId)
+	{
+		var command = new RemoveProjectPermissionFromProjectRoleCommand
+		{
+			ProjectRoleId = roleId,
+			ProjectPermissionId = permissionId
+		};
+		var result = await Mediator.Send(command);
+		return Ok(result);
+	}
+
+	[HttpDelete("project-roles/{roleId:guid}")]
+	[MustHavePermission(PermissionCode.SystemSettings)]
+	public async Task<IActionResult> DeleteProjectRole(Guid roleId)
+	{
+		await Mediator.Send(new DeleteProjectRoleCommand { ProjectRoleId = roleId });
+		return NoContent();
 	}
 }
