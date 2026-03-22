@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace IssueTracker.Domain.Entities;
 
 [Table("user_projects")]
-public class UserProject : AuditableEntity
+public class UserProject : AuditableEntity, IAggregateRoot
 {
 	[Column("user_id")]
 	public Guid UserId { get; set; }

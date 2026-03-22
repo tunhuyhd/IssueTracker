@@ -28,4 +28,15 @@ public class Project : AuditableEntity, IAggregateRoot
 
 	public Project() { }
 
+	public void Update(string name, string description)
+	{
+		Name = name;
+		Description = description;
+	}
+
+	public void ToggleEnabled()
+	{
+		IsEnabled = !IsEnabled;
+	}
+
 }

@@ -13,7 +13,6 @@
 
   <ItemGroup>
     <Folder Include="Common\Request\" />
-    <Folder Include="Projects\Queries\" />
   </ItemGroup>
 
   <PropertyGroup>
