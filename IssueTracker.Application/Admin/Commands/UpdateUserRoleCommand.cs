@@ -30,14 +30,14 @@ public class UpdateUserRoleCommandHandler(
 		}
 
 		// Get the user to update
-		var user = await userRepository.GetByIdAsync(request.UserId, cancellationToken);
+		var user = await userRepository.GetByIdAsync(request.UserId, "", cancellationToken);
 		if (user == null)
 		{
 			throw new KeyNotFoundException($"User with ID {request.UserId} not found.");
 		}
 
 		// Verify the new role exists
-		var role = await roleRepository.GetByIdAsync(request.RoleId, cancellationToken);
+		var role = await roleRepository.GetByIdAsync(request.RoleId, "", cancellationToken);
 		if (role == null)
 		{
 			throw new InvalidOperationException($"Role with ID {request.RoleId} does not exist.");

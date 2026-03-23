@@ -24,7 +24,7 @@ public class RegisterCommandHandler(IRepository<User> userRepository, IApplicati
 		// Check for duplicate username or email
 		var existingUser = await userRepository.GetOneAsync(
 			u => u.Username == request.Username || u.Email == request.Email, 
-			cancellationToken);
+			"", cancellationToken);
 
 		if (existingUser != null)
 		{

@@ -34,7 +34,7 @@ public class UpdateProjectRoleCommandHandler(
 			throw new UnauthorizedAccessException("Only admins can update project roles.");
 		}
 
-		var projectRole = await repository.GetByIdAsync(request.Id, cancellationToken);
+		var projectRole = await repository.GetByIdAsync(request.Id, "", cancellationToken);
 
 		if (projectRole == null)
 		{

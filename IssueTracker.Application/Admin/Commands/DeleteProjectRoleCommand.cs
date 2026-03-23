@@ -25,7 +25,7 @@ public class DeleteProjectRoleCommandHandler(ICurrentUser currentUser, IReposito
 			throw new UnauthorizedAccessException("Only Admin can delete project roles.");
 		}
 
-		var targetProjectRole = await projectRoleRepository.GetByIdAsync(request.ProjectRoleId, cancellationToken);
+		var targetProjectRole = await projectRoleRepository.GetByIdAsync(request.ProjectRoleId, "", cancellationToken);
 
 		if (targetProjectRole == null)
 		{

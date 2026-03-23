@@ -23,7 +23,7 @@ public class DeleteProjectPermissionCommandHandler(IRepository<ProjectPermission
 		{
 			throw new UnauthorizedAccessException("Only admins can delete project permissions.");
 		}
-		var projectPermission = await repository.GetByIdAsync(request.Id, cancellationToken);
+		var projectPermission = await repository.GetByIdAsync(request.Id, "", cancellationToken);
 
 		if (projectPermission == null)
 		{

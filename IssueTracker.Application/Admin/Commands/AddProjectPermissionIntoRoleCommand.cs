@@ -28,14 +28,14 @@ public class AddProjectPermissionIntoRoleCommandHandler(ICurrentUser currentUser
 			throw new UnauthorizedAccessException("Only admin can add project permission into role");
 		}
 
-		var projectRole = await projectRoleRepository.GetByIdAsync(request.ProjectRoleId, cancellationToken);
+		var projectRole = await projectRoleRepository.GetByIdAsync(request.ProjectRoleId, "",cancellationToken);
 
 		if (projectRole == null)
 		{
 			throw new KeyNotFoundException($"Project role with ID {request.ProjectRoleId} not found.");
 		}
 
-		var projectPermission = await projectPermissionRepository.GetByIdAsync(request.ProjectPermissionId, cancellationToken);
+		var projectPermission = await projectPermissionRepository.GetByIdAsync(request.ProjectPermissionId, "",cancellationToken);
 
 		if (projectPermission == null)
 		{

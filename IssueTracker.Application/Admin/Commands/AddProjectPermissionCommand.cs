@@ -29,7 +29,7 @@ public class AddProjectPermissionCommandHandler(
 			throw new UnauthorizedAccessException("Only admins can add project permissions.");
 		}
 
-		var existingPermission = await repository.GetOneAsync(p => p.Code == request.Code, cancellationToken);
+		var existingPermission = await repository.GetOneAsync(p => p.Code == request.Code, "",cancellationToken);
 
 		if (existingPermission != null)
 		{

@@ -51,14 +51,16 @@ public class ApplicationDbRepository<T> : IRepository<T>
         return Task.CompletedTask;
     }
 
-    public async Task<T?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<T?> GetByIdAsync(Guid id, string? includeProperties = "", CancellationToken cancellationToken = default)
     {
         return await _dbSet.FindAsync(new object[] { id }, cancellationToken);
     }
 
     public async Task<T?> GetOneAsync(
         Expression<Func<T, bool>> predicate,
-        CancellationToken cancellationToken = default)
+        string? includeProperties = "",
+
+		CancellationToken cancellationToken = default)
     {
         return await _dbSet.FirstOrDefaultAsync(predicate, cancellationToken);
     }
