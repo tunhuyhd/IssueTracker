@@ -1,6 +1,7 @@
 namespace IssueTracker.Domain.Common;
 
-public interface IRepository<T> : IReadRepository<T> where T : class, IAggregateRoot
+public interface IRepository<T> : IReadRepository<T> where T : Entity, IAggregateRoot
+
 {
     Task<T> AddAsync(T entity, CancellationToken cancellationToken = default);
     Task<IEnumerable<T>> AddRangeAsync(IEnumerable<T> entities, CancellationToken cancellationToken = default);

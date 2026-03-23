@@ -33,17 +33,19 @@ public class ProjectController : BaseApiController
 
 	[HttpPut("{id:guid}")]
 	[MustBeAuthenticated]
-	public async Task<IActionResult> UpdateProject(Guid id, string name, string description)
+	public async Task<IActionResult> UpdateProject(Guid id, [FromBody] UpdateProjectCommand command)
 	{
-		var result = await Mediator.Send(new UpdateProjectCommand { Id = id, Name = name, Description = description});
+		if (command == null) return BadRequest();
+		command.Id = id;
+		var result = await Mediator.Send(command);
 		return Ok(result);
 	}
 
-	[HttpPut("{id:guid}")]
+	[HttpPut("{id:guid}/toggle")]
 	[MustBeAuthenticated]
 	public async Task<IActionResult> ToggleEnableProject(Guid id)
 	{
-		var result = await Mediator.Send(new ToggleEnableProjectCommand { Id = id});
+		var result = await Mediator.Send(new ToggleEnableProjectCommand { Id = id });
 		return Ok(result);
 	}
 

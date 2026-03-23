@@ -1,3 +1,5 @@
+using System;
+using System.Linq;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using IssueTracker.Domain.Common;
@@ -6,7 +8,7 @@ using IssueTracker.Infrastructure.Persistence.Context;
 namespace IssueTracker.Infrastructure.Persistence.Repositories;
 
 public class ApplicationDbRepository<T> : IRepository<T>
-    where T : class, IAggregateRoot
+    where T : Entity, IAggregateRoot
 {
     protected readonly ApplicationDbContext _context;
     protected readonly DbSet<T> _dbSet;
@@ -15,6 +17,19 @@ public class ApplicationDbRepository<T> : IRepository<T>
     {
         _context = context;
         _dbSet = context.Set<T>();
+    }
+
+    private static IQueryable<T> IncludeQueryable(string? includeProperties, IQueryable<T> query)
+    {
+        if (!string.IsNullOrWhiteSpace(includeProperties))
+        {
+            foreach (var include in includeProperties.Split(',', StringSplitOptions.RemoveEmptyEntries))
+            {
+                query = query.Include(include.Trim());
+            }
+        }
+
+        return query;
     }
 
     public async Task<T> AddAsync(T entity, CancellationToken cancellationToken = default)
@@ -51,18 +66,85 @@ public class ApplicationDbRepository<T> : IRepository<T>
         return Task.CompletedTask;
     }
 
-    public async Task<T?> GetByIdAsync(Guid id, string? includeProperties = "", CancellationToken cancellationToken = default)
+    public async Task<T> GetByIdAsync(Guid id, string? includeProperties = "", CancellationToken cancellationToken = default)
     {
-        return await _dbSet.FindAsync(new object[] { id }, cancellationToken);
+        IQueryable<T> query = _dbSet.AsQueryable();
+
+        query = IncludeQueryable(includeProperties, query);
+
+        var result = await query.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+
+        if (result == null)
+            throw new ArgumentException($"Given id of {typeof(T)} {id} is not found.");
+
+        return result;
     }
 
     public async Task<T?> GetOneAsync(
         Expression<Func<T, bool>> predicate,
         string? includeProperties = "",
 
-		CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default)
     {
-        return await _dbSet.FirstOrDefaultAsync(predicate, cancellationToken);
+        IQueryable<T> query = _dbSet.AsQueryable();
+
+        query = IncludeQueryable(includeProperties, query);
+
+        return await query.FirstOrDefaultAsync(predicate, cancellationToken);
+    }
+
+    // List all with optional includes
+    public async Task<List<T>> ListAllAsync(string? includeProperties = null, CancellationToken cancellationToken = default)
+    {
+        IQueryable<T> query = _dbSet.AsQueryable();
+
+        query = IncludeQueryable(includeProperties, query);
+
+        return await query.ToListAsync(cancellationToken);
+    }
+
+    // List with predicate and optional includes
+    public async Task<List<T>> ListAsync(
+        Expression<Func<T, bool>> predicate,
+        string? includeProperties,
+        CancellationToken cancellationToken = default)
+    {
+        IQueryable<T> query = _dbSet.AsQueryable();
+
+        if (predicate != null)
+            query = query.Where(predicate);
+
+        query = IncludeQueryable(includeProperties, query);
+
+        return await query.ToListAsync(cancellationToken);
+    }
+
+    // Paginate helper that returns total count and items
+    public async Task<(int TotalCount, List<T> Items)> PaginateAsync(Expression<Func<T, bool>> predicate,
+        int? pageSize = null,
+        int? currentPage = null,
+        string includeProperties = "",
+        CancellationToken cancellationToken = default)
+    {
+        IQueryable<T> query = _dbSet.AsNoTracking();
+
+        query = IncludeQueryable(includeProperties, query);
+
+        if (predicate != null)
+        {
+            query = query.Where(predicate);
+        }
+
+        var queryCount = await query.CountAsync(cancellationToken);
+
+        if (currentPage != null && pageSize != null && currentPage > 0 && pageSize > 0)
+        {
+            query = query.Skip((currentPage.Value - 1) * pageSize.Value).Take(pageSize.Value);
+        }
+
+        var result = await query.ToListAsync(cancellationToken);
+
+        return (queryCount, result);
     }
 
     public async Task<List<T>> ListAsync(CancellationToken cancellationToken = default)

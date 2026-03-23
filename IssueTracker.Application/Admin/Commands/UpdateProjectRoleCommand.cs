@@ -34,9 +34,12 @@ public class UpdateProjectRoleCommandHandler(
 			throw new UnauthorizedAccessException("Only admins can update project roles.");
 		}
 
-		var projectRole = await repository.GetByIdAsync(request.Id, "", cancellationToken);
-
-		if (projectRole == null)
+     Domain.Entities.ProjectRole projectRole;
+		try
+		{
+			projectRole = await repository.GetByIdAsync(request.Id, "", cancellationToken);
+		}
+		catch (ArgumentException)
 		{
 			throw new KeyNotFoundException($"Project role with ID {request.Id} not found.");
 		}

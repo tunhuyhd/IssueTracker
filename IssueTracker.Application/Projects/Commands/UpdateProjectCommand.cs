@@ -1,9 +1,11 @@
-﻿using IssueTracker.Application.Common.Authorization;
+﻿using IssueTracker.Application.Common;
+using IssueTracker.Application.Common.Authorization;
 using IssueTracker.Application.Common.Dto.Projects;
 using IssueTracker.Domain.Common;
 using IssueTracker.Domain.Entities;
 using IssueTracker.Domain.Entities.Enum;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -18,23 +20,24 @@ public class UpdateProjectCommand : IRequest<ProjectDetailDto>
 	public string? Name { get; set; } = string.Empty;
 	public string? Description { get; set; } = string.Empty;
 }
-public class UpdateProjectCommandHandler(IRepository<Project> projectRepository, ICurrentUser currentUser) : IRequestHandler<UpdateProjectCommand, ProjectDetailDto>
+public class UpdateProjectCommandHandler(IRepository<Project> projectRepository, ICurrentUser currentUser, IApplicationDbContext dbContext) : IRequestHandler<UpdateProjectCommand, ProjectDetailDto>
 {
 	public async Task<ProjectDetailDto> Handle(UpdateProjectCommand request, CancellationToken cancellationToken)
 	{
-		var project = await projectRepository.GetByIdAsync(request.Id, "UserProject",cancellationToken);
+		var curentUserId = currentUser.GetUserId();   
+		
+		var userProject = await dbContext.UserProjects.FirstOrDefaultAsync(up => up.UserId == curentUserId && up.ProjectId == request.Id, cancellationToken);
 
-		var currentUserRole = currentUser.GetRoleCode();
+		var userRoleInProjectId = userProject.ProjectRoleId;
 
-		if (currentUserRole != ProjectRoleCode.ProjectAdmin)
+		var projectAdmin = await dbContext.ProjectRoles.FirstOrDefaultAsync(pr => pr.Id == userRoleInProjectId);
+
+		if (projectAdmin.Code != ProjectRoleCode.ProjectAdmin)
 		{
 			throw new UnauthorizedAccessException("You do not have permission to update this project.");
 		}
 
-		if (project == null)
-		{
-			throw new ArgumentNullException(nameof(project));
-		}
+		var project = await dbContext.Projects.Include(p => p.UserProjects).FirstOrDefaultAsync(p => p.Id == request.Id, cancellationToken);
 
 		project.Update(request.Name, request.Description);
 

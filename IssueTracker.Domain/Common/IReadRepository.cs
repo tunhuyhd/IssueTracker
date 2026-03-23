@@ -2,9 +2,9 @@ using System.Linq.Expressions;
 
 namespace IssueTracker.Domain.Common;
 
-public interface IReadRepository<T> where T : class, IAggregateRoot
+public interface IReadRepository<T> where T : Entity, IAggregateRoot
 {
-    Task<T?> GetByIdAsync(Guid id, string? includeProperties = "", CancellationToken cancellationToken = default);
+    Task<T> GetByIdAsync(Guid id, string? includeProperties = "", CancellationToken cancellationToken = default);
     Task<T?> GetOneAsync(Expression<Func<T, bool>> predicate, string? includeProperties = "", CancellationToken cancellationToken = default);
     Task<List<T>> ListAsync(CancellationToken cancellationToken = default);
     Task<List<T>> ListAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default);

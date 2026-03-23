@@ -27,7 +27,8 @@ public class GetProjectByIdQueryHandler(IApplicationDbContext dbContext) : IRequ
 			Id = project.Id,
 			Name = project.Name,
 			Description = project.Description,
-			IsEnabled = project.IsEnabled
+			IsEnabled = project.IsEnabled,
+			CreatedOn = project.CreatedOn
 		};
 	}
 }
