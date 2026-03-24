@@ -21,15 +21,15 @@ public class ToggleEnableProjectCommandHandler(IRepository<Project> projectRepos
 	{
 		var currentUserId = currentUser.GetUserId();
 
-		var currentUserProject = await dbContext.UserProjects
-			.FirstOrDefaultAsync(rip => rip.UserId == currentUserId &&  rip.ProjectId == request.Id,cancellationToken);
+		var userProjectInfo = await dbContext.UserProjects
+			.Where(up => up.UserId == currentUserId && up.ProjectId == request.Id)
+			.Select(up => new
+			{
+				up.ProjectRole.Code
+			})
+			.FirstOrDefaultAsync(cancellationToken);
 
-		var projectAdminId = currentUserProject.ProjectRoleId;
-		
-		var roleInProject = await dbContext.ProjectRoles
-			.FirstOrDefaultAsync(pr => pr.Id == projectAdminId, cancellationToken);
-
-		if (roleInProject.Code != ProjectRoleCode.ProjectAdmin)
+		if (userProjectInfo == null || userProjectInfo.Code != ProjectRoleCode.ProjectAdmin)
 		{
 			throw new InvalidOperationException("You don't have permission to enable this project");
 		}

@@ -24,17 +24,19 @@ public class UpdateProjectCommandHandler(IRepository<Project> projectRepository,
 {
 	public async Task<ProjectDetailDto> Handle(UpdateProjectCommand request, CancellationToken cancellationToken)
 	{
-		var curentUserId = currentUser.GetUserId();   
-		
-		var userProject = await dbContext.UserProjects.FirstOrDefaultAsync(up => up.UserId == curentUserId && up.ProjectId == request.Id, cancellationToken);
+		var currentUserId = currentUser.GetUserId();
 
-		var userRoleInProjectId = userProject.ProjectRoleId;
+		var userProjectInfo = await dbContext.UserProjects
+			.Where(up => up.UserId == currentUserId && up.ProjectId == request.Id)
+			.Select(up => new
+			{
+				up.ProjectRole.Code
+			})
+			.FirstOrDefaultAsync(cancellationToken);
 
-		var projectAdmin = await dbContext.ProjectRoles.FirstOrDefaultAsync(pr => pr.Id == userRoleInProjectId);
-
-		if (projectAdmin.Code != ProjectRoleCode.ProjectAdmin)
+		if (userProjectInfo == null || userProjectInfo.Code != ProjectRoleCode.ProjectAdmin)
 		{
-			throw new UnauthorizedAccessException("You do not have permission to update this project.");
+			throw new InvalidOperationException("You don't have permission to enable this project");
 		}
 
 		var project = await dbContext.Projects.Include(p => p.UserProjects).FirstOrDefaultAsync(p => p.Id == request.Id, cancellationToken);
