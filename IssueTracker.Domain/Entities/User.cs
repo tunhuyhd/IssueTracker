@@ -28,7 +28,10 @@ public class User : AuditableEntity, IAggregateRoot
     public bool IsActive { get; set; } = true;
 
 	[Column("image_url")]
-	public string? ImageUrl { get; set; } = default!;
+   public string? ImageUrl { get; set; } = default!;
+
+	[Column("image_public_id")]
+	public string? ImagePublicId { get; set; }
 
 	[Column("refresh_token")]
 	public string? RefreshToken { get; set; } = null!;

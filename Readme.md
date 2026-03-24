@@ -65,7 +65,7 @@ dotnet run --project IssueTracker.WebApi
 ### Tạo Migration
 ```bash
 # Migration mới
-dotnet ef migrations add <MigrationName> --project IssueTracker.Infrastructure --startup-project IssueTracker.WebApi
+dotnet ef migrations add <MigrationName> --project IssueTracker.Infrastructure --startup-project IssueTracker.WebApi --output-dir "./Persistence/Migrations"
 ```
 
 ### Cập Nhật Database

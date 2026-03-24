@@ -12,6 +12,8 @@ using IssueTracker.Infrastructure.Auth;
 using IssueTracker.Infrastructure.Persistence.Context;
 using IssueTracker.Infrastructure.Persistence.Interceptors;
 using IssueTracker.Infrastructure.Persistence.Repositories;
+using IssueTracker.Infrastructure.Services;
+using IssueTracker.Application.Common.Interfaces;
 
 namespace IssueTracker.Infrastructure;
 
@@ -24,6 +26,18 @@ public static class Startup
         services.AddHttpContextAccessor();
         services.AddAuth();
         services.AddPersistence(configuration);
+
+        // Register image services
+        var provider = configuration.GetValue<string>("Storage:Provider")?.ToLowerInvariant();
+        if (provider == "cloudinary")
+        {
+            services.AddScoped<IImageService, CloudinaryImageService>();
+        }
+        else
+        {
+            services.AddScoped<IImageService, LocalImageService>();
+        }
+
         return services;
     }
 
