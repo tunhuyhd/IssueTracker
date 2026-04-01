@@ -14,6 +14,7 @@ using IssueTracker.Infrastructure.Persistence.Interceptors;
 using IssueTracker.Infrastructure.Persistence.Repositories;
 using IssueTracker.Infrastructure.Services;
 using IssueTracker.Application.Common.Interfaces;
+using IssueTracker.Infrastructure.Services.Configuration;
 
 namespace IssueTracker.Infrastructure;
 
@@ -27,16 +28,14 @@ public static class Startup
         services.AddAuth();
         services.AddPersistence(configuration);
 
-        // Register image services
-        var provider = configuration.GetValue<string>("Storage:Provider")?.ToLowerInvariant();
-        if (provider == "cloudinary")
-        {
-            services.AddScoped<IImageService, CloudinaryImageService>();
-        }
-        else
-        {
-            services.AddScoped<IImageService, LocalImageService>();
-        }
+        // Configure file storage settings
+        services.Configure<FileStorageSettings>(
+            configuration.GetSection("FileStorage"));
+
+        // Add file storage services with automatic provider selection
+        services
+            .AddCloudinaryService(configuration)
+            .AddFileStorageServices();
 
         return services;
     }

@@ -6,6 +6,7 @@ using IssueTracker.Infrastructure.Persistence.Seeder;
 using IssueTracker.WebApi.Configuration;
 using IssueTracker.WebApi.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 var builder = WebApplication.CreateBuilder(args);
@@ -89,6 +90,14 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+// Enable static files serving from wwwroot
+app.UseStaticFiles();
+app.UseStaticFiles(new StaticFileOptions
+{
+	FileProvider = new PhysicalFileProvider(
+		Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "files")),
+	RequestPath = "/files"
+});
 app.UseCors("AllowFrontend");
 
 // Global Exception Handler (phải đặt sau CORS)

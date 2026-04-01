@@ -23,7 +23,7 @@ public class AuthController : BaseApiController
 		return Ok(result);
 	}
 
-	[HttpPost("refresh")]
+	[HttpPost("refresh")] 
 	public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenCommand command)
 	{
 		// Get refresh token from cookie
