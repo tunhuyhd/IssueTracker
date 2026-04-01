@@ -49,4 +49,20 @@ public class ProjectController : BaseApiController
 		return Ok(result);
 	}
 
+	[HttpDelete("{id:guid}")]
+	[MustBeAuthenticated]
+	public async Task<IActionResult> DeleteProject(Guid id)
+	{
+		await Mediator.Send(new DeleteProjectCommand { Id = id });
+		return Ok();
+	}
+
+	[HttpGet("/my-role-in-project/{projectId:guid}")]
+	[MustBeAuthenticated]
+	public async Task<IActionResult> GetCurrentUserRoleInProject(Guid projectId)
+	{
+		var result = await Mediator.Send(new GetCurrentUserRoleInProjectQuery { ProjectId = projectId });
+		return Ok(result);
+	}
+
 }
