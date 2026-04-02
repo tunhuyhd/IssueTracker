@@ -15,5 +15,7 @@ public interface IApplicationDbContext
 
     DbSet<ProjectRolePermission> ProjectRolePermissions { get; }
 
+    DbSet<InvitationJoiningProject> Invitations { get; }
+
 	Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

@@ -18,6 +18,8 @@ public class ApplicationDbContext(DbContextOptions options, ICurrentUser current
 	public DbSet<UserProject> UserProjects => Set<UserProject>();
 	public DbSet<ProjectRolePermission> ProjectRolePermissions => Set<ProjectRolePermission>();
 
+	public DbSet<InvitationJoiningProject> Invitations => Set<InvitationJoiningProject>();
+
 	protected override void OnModelCreating(ModelBuilder modelBuilder)
 	{
 		base.OnModelCreating(modelBuilder);
