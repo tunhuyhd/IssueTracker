@@ -29,8 +29,8 @@ public class ApplicationDbContext(DbContextOptions options, ICurrentUser current
 		{
 			entity.Property(e => e.Username).HasMaxLength(100).IsRequired();
 			entity.Property(e => e.Email).HasMaxLength(255).IsRequired();
-			entity.Property(e => e.PasswordHash).IsRequired();
-			entity.Property(e => e.Salt).IsRequired();
+			entity.Property(e => e.PasswordHash);
+			entity.Property(e => e.Salt);
 			entity.HasIndex(e => e.Username).IsUnique();
 			entity.HasIndex(e => e.Email).IsUnique();
 		});

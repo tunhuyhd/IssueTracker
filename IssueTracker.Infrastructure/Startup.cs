@@ -47,6 +47,7 @@ public static class Startup
         services.AddScoped<ICurrentUserService, CurrentUserService>();
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<IProjectAuthorizationService, ProjectAuthorizationService>();
+        services.AddScoped<IGoogleAuthService, GoogleAuthService>();
         return services;
     }
 

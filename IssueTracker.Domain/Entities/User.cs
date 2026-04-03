@@ -18,8 +18,8 @@ public class User : AuditableEntity, IAggregateRoot
     [Column("full_name")]
     public string? FullName { get; set; }
 
-    [Column("password_hash")]
-    public string PasswordHash { get; set; } = string.Empty;
+	[Column("password_hash")]
+	public string? PasswordHash { get; set; }
 
 	[Column("salt")]
 	public string? Salt { get; set; }
@@ -42,6 +42,12 @@ public class User : AuditableEntity, IAggregateRoot
 	[Column("role_id")]
 	public Guid RoleId { get; set; }
 	public Role Role { get; set; }
+
+	[Column("external_login_provider")]
+	public string? ExternalLoginProvider { get; set; }
+
+	[Column("external_login_provider_key")]
+	public string? ExternalLoginProviderKey { get; set; }
 
 	public List<UserProject> UserProjects { get; set; } = [];
 

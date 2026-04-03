@@ -36,6 +36,26 @@ public class TokenService : ITokenService
 		if (user == null)
 			throw new Exception("User not found or inactive");
 
+		return await GenerateTokenAsync(user, cancellationToken);
+	}
+
+	public async Task<TokenResponse> GenerateTokenAsync(User user, CancellationToken cancellationToken = default)
+	{
+		if (user == null)
+			throw new ArgumentNullException(nameof(user));
+
+		if (!user.IsActive)
+			throw new Exception("User is inactive");
+
+		if (user.Role == null)
+		{
+			await _dbContext.Entry(user).Reference(u => u.Role).LoadAsync(cancellationToken);
+			if (user.Role != null)
+			{
+				await _dbContext.Entry(user.Role).Collection(r => r.Permissions).LoadAsync(cancellationToken);
+			}
+		}
+
 		var accessToken = GenerateAccessToken(user);
 		var refreshToken = GenerateRefreshToken();
 
@@ -43,7 +63,7 @@ public class TokenService : ITokenService
 		user.RefreshToken = refreshToken;
 		user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(_jwtSettings.RefreshTokenExpirationInDays);
 
-		await _dbContext.SaveChangesAsync(cancellationToken);
+		// await _dbContext.SaveChangesAsync(cancellationToken);
 
 		return new TokenResponse
 		{

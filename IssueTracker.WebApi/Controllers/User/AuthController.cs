@@ -49,6 +49,17 @@ public class AuthController : BaseApiController
 		return Ok(new { message = "Logged out successfully" });
 	}
 
+	[HttpPost("google")]
+	public async Task<IActionResult> GoogleAuth([FromBody] GoogleAuthCommand command)
+	{
+		var result = await Mediator.Send(command);
+
+		// Set refresh token in HTTPOnly cookie
+		SetRefreshTokenCookie(result.RefreshToken);
+
+		return Ok(result);
+	}
+
 	private void SetRefreshTokenCookie(string refreshToken)
 	{
 		var cookieOptions = new CookieOptions

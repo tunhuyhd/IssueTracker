@@ -9,6 +9,10 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+
+// Load environment variables from .env file
+DotNetEnv.Env.Load();
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add CORS
@@ -33,6 +37,18 @@ builder.Services.AddSwaggerWithJwtAuth();
 
 // Configure JWT Settings
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
+
+// Configure Google Settings from environment variables
+builder.Services.Configure<GoogleSettings>(options =>
+{
+	options.ClientId = Environment.GetEnvironmentVariable("GOOGLE_CLIENT_ID") 
+		?? builder.Configuration["GoogleSettings:ClientId"] 
+		?? throw new InvalidOperationException("Google ClientId is not configured. Set GOOGLE_CLIENT_ID environment variable.");
+
+	options.ClientSecret = Environment.GetEnvironmentVariable("GOOGLE_CLIENT_SECRET") 
+		?? builder.Configuration["GoogleSettings:ClientSecret"] 
+		?? throw new InvalidOperationException("Google ClientSecret is not configured. Set GOOGLE_CLIENT_SECRET environment variable.");
+});
 
 // Đọc JWT Settings
 var jwtSettings = builder.Configuration.GetSection("JwtSettings").Get<JwtSettings>();
