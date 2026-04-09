@@ -14,4 +14,6 @@ public class InvitationDto
 	public string SenderName { get; set; }
 	public string RecipientEmail { get; set; } = string.Empty;
 	public StatusOfInvitation StatusOfInvitation { get; set; }
+	public Guid ProjectRoleId { get; set; }
+	public string ProjectRoleName { get; set; } = string.Empty;
 }
