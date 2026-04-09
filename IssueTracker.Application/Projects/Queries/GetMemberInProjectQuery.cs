@@ -18,20 +18,19 @@ public class GetMemberInProjectQueryHandler(IApplicationDbContext context, ICurr
 {
 	public async Task<List<UserInProjectDto>> Handle(GetMemberInProjectQuery request, CancellationToken cancellationToken)
 	{
-		var isMember = await context.UserProjects
-			.AnyAsync(up => up.ProjectId == request.ProjectId && up.UserId == currentUser.GetUserId(), cancellationToken);
-
 		var roleOfCurrentUser = await context.UserProjects
 			.Where(up => up.ProjectId == request.ProjectId && up.UserId == currentUser.GetUserId())
 			.Select(up => up.ProjectRole.Code)
 			.FirstOrDefaultAsync(cancellationToken);
 
-			if (!isMember && (roleOfCurrentUser != ProjectRoleCode.ProjectAdmin || roleOfCurrentUser != ProjectRoleCode.ProjectManager))
-			{
-				throw new Exception("You don't have permission to view members in this project.");
-			}
+		if (roleOfCurrentUser == null ||
+			(roleOfCurrentUser != ProjectRoleCode.ProjectAdmin
+			 && roleOfCurrentUser != ProjectRoleCode.ProjectManager))
+		{
+			throw new Exception("You don't have permission to view members in this project.");
+		}
 
-			var members = await context.UserProjects
+		var members = await context.UserProjects
 			.Where(up => up.ProjectId == request.ProjectId)
 			.Select(up => new UserInProjectDto
 			{

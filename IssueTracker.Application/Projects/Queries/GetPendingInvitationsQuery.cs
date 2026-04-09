@@ -25,7 +25,6 @@ public class GetPendingInvitationsQueryHandler(IApplicationDbContext dbContext, 
 
         var invitations = await dbContext.Invitations
             .AsNoTracking()
-            .Include(i => i.Project)
             .Include(i => i.Sender)
             .Include(i => i.ProjectRole)
             .Where(i => i.RecipientEmail == currentUserEmail

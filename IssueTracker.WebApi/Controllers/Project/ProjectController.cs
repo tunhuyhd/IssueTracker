@@ -57,7 +57,7 @@ public class ProjectController : BaseApiController
 		return Ok();
 	}
 
-	[HttpGet("my-role-in-project/{projectId:guid}")] 
+	[HttpGet("my-role-in-project/{projectId:guid}")]
 	[MustBeAuthenticated]
 	public async Task<IActionResult> GetCurrentUserRoleInProject(Guid projectId)
 	{

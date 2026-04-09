@@ -31,16 +31,31 @@ public class EmailService : IEmailService
         _fromName = _configuration["EmailSettings:FromName"] ?? "IssueTracker System";
     }
 
+    private bool IsDevelopmentEnvironment()
+    {
+        var environmentName = _configuration["ASPNETCORE_ENVIRONMENT"]
+            ?? _configuration["DOTNET_ENVIRONMENT"]
+            ?? string.Empty;
+
+        return string.Equals(environmentName, "Development", StringComparison.OrdinalIgnoreCase);
+    }
+
     public async Task<bool> SendEmailAsync(string toEmail, string subject, string body, bool isHtml = false)
     {
         try
         {
-            // If SMTP is not configured, log and return true (for development purposes)
+            // If SMTP is not configured, only treat it as a successful no-op in development.
             if (string.IsNullOrEmpty(_smtpUsername) || string.IsNullOrEmpty(_smtpPassword))
             {
-                _logger.LogWarning("SMTP credentials not configured. Email would be sent to: {ToEmail}, Subject: {Subject}", toEmail, subject);
-                _logger.LogInformation("Email Body: {Body}", body);
-                return true;
+                if (IsDevelopmentEnvironment())
+                {
+                    _logger.LogWarning("SMTP credentials not configured in Development. Email would be sent to: {ToEmail}, Subject: {Subject}", toEmail, subject);
+                    _logger.LogInformation("Email Body: {Body}", body);
+                    return true;
+                }
+
+                _logger.LogError("SMTP credentials are not configured. Cannot send email to: {ToEmail}, Subject: {Subject}", toEmail, subject);
+                return false;
             }
 
             using var smtpClient = new SmtpClient(_smtpHost, _smtpPort)

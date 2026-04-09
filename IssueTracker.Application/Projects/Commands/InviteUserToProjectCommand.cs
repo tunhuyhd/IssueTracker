@@ -44,6 +44,16 @@ public class InviteUserToProjectCommandHandler(
 			throw new NotFoundException($"Project with ID {request.ProjectId} not found");
 		}
 
+		var isProjectMember = await dbContext.UserProjects
+					.AnyAsync(up => up.ProjectId == request.ProjectId && up.UserId == currentUserId, cancellationToken);
+
+		var isProjectOwner = project.Owner != null && project.Owner.Id == currentUserId;
+
+		if (!isProjectOwner && !isProjectMember)
+		{
+			throw new UnauthorizedAccessException("User is not allowed to invite users to this project");
+		}
+
 		var sender = await dbContext.Users
 			.FirstOrDefaultAsync(u => u.Id == currentUserId, cancellationToken);
 
