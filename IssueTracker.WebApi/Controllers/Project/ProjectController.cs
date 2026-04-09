@@ -57,12 +57,54 @@ public class ProjectController : BaseApiController
 		return Ok();
 	}
 
-	[HttpGet("/my-role-in-project/{projectId:guid}")]
+	[HttpGet("my-role-in-project/{projectId:guid}")]
 	[MustBeAuthenticated]
 	public async Task<IActionResult> GetCurrentUserRoleInProject(Guid projectId)
 	{
 		var result = await Mediator.Send(new GetCurrentUserRoleInProjectQuery { ProjectId = projectId });
 		return Ok(result);
+	}
+
+	[HttpGet("{projectId:guid}/members")]
+	[MustBeAuthenticated]
+	public async Task<IActionResult> GetMembersInProject(Guid projectId)
+	{
+		var result = await Mediator.Send(new GetMemberInProjectQuery { ProjectId = projectId });
+		return Ok(result);
+	}
+
+	[HttpPost("{projectId:guid}/invite")]
+	[MustBeAuthenticated]
+	public async Task<IActionResult> InviteUserToProject(Guid projectId, [FromBody] InviteUserToProjectCommand command)
+	{
+		if (command == null) return BadRequest();
+		command.ProjectId = projectId;
+		var result = await Mediator.Send(command);
+		return Ok(result);
+	}
+
+	[HttpGet("invitations")]
+	[MustBeAuthenticated]
+	public async Task<IActionResult> GetPendingInvitations()
+	{
+		var result = await Mediator.Send(new GetPendingInvitationsQuery());
+		return Ok(result);
+	}
+
+	[HttpPost("invitations/{invitationId:guid}/accept")]
+	[MustBeAuthenticated]
+	public async Task<IActionResult> AcceptInvitation(Guid invitationId)
+	{
+		var result = await Mediator.Send(new AcceptInvitationCommand { InvitationId = invitationId });
+		return Ok(new { success = result, message = "Invitation accepted successfully" });
+	}
+
+	[HttpPost("invitations/{invitationId:guid}/reject")]
+	[MustBeAuthenticated]
+	public async Task<IActionResult> RejectInvitation(Guid invitationId)
+	{
+		var result = await Mediator.Send(new RejectInvitationCommand { InvitationId = invitationId });
+		return Ok(new { success = result, message = "Invitation rejected successfully" });
 	}
 
 }

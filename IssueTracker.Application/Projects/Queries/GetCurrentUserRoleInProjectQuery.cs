@@ -21,9 +21,10 @@ public class GetCurrentUserRoleInProjectQueryHandler(IApplicationDbContext conte
 		var userId = currentUser.GetUserId();
 
 		var userProject = await context.UserProjects
+			.Include(up => up.ProjectRole)
 			.FirstOrDefaultAsync(up => up.ProjectId == request.ProjectId && up.UserId == userId, cancellationToken);
 
-		var projectRoleCode = userProject?.ProjectRole.Code ?? "NoRole";
+		var projectRoleCode = userProject?.ProjectRole?.Code ?? "NoRole";
 
 		return new UserInProjectDto
 		{

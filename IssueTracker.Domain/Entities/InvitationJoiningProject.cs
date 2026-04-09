@@ -22,5 +22,21 @@ public class InvitationJoiningProject : AuditableEntity, IAggregateRoot
 	[Column("status")]
 	public StatusOfInvitation Status { get; set; } = StatusOfInvitation.Pending;
 
+	[Column("project_role_id")]
+	public Guid ProjectRoleId { get; set; }
+	public ProjectRole ProjectRole { get; set; } = null!;
+
 	private InvitationJoiningProject() { }
+
+	public static InvitationJoiningProject Create(Guid projectId, Guid senderId, string recipientEmail, Guid projectRoleId)
+	{
+		return new InvitationJoiningProject
+		{
+			ProjectId = projectId,
+			SenderId = senderId,
+			RecipientEmail = recipientEmail,
+			ProjectRoleId = projectRoleId,
+			Status = StatusOfInvitation.Pending
+		};
+	}
 }
